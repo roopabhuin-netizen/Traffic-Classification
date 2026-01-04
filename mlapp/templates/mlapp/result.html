@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Network Traffic Classification</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:Poppins,Arial,sans-serif;
+    background:linear-gradient(135deg,#000428,#004e92);
+    color:#fff;
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{max-width:1200px;margin:auto}
+
+h1{
+    text-align:center;
+    font-size:2.6rem;
+    background:linear-gradient(90deg,#00ffea,#00b4d8);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.subtitle{
+    text-align:center;
+    color:#90e0ef;
+    margin-bottom:40px
+}
+
+.dashboard{
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.card{
+    background:rgba(10,25,47,.9);
+    border-radius:22px;
+    padding:30px;
+    width:500px;
+    border:1px solid rgba(0,255,234,.25);
+}
+
+/* ===== CHART ===== */
+.chart-wrapper{max-width:350px;margin:auto}
+.chart-container{position:relative;aspect-ratio:1/1}
+
+canvas{
+    width:100%!important;
+    height:100%!important;
+    filter:drop-shadow(0 0 12px rgba(0,255,234,.35));
+}
+
+.center-text{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-55%);
+    text-align:center;
+    pointer-events:none;
+}
+
+.center-title{
+    font-size:1.3rem;
+    font-weight:700;
+    color:#00ffea;
+}
+
+.center-subtitle{
+    font-size:.9rem;
+    color:#90e0ef
+}
+
+/* ===== STATS ===== */
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-top:25px;
+}
+
+.stat{
+    background:rgba(0,255,234,.12);
+    border-radius:4%;
+    padding:22px;
+    text-align:center;
+}
+
+.stat h4{
+    font-size:.8rem;
+    color:#90e0ef
+}
+
+.stat p{
+    font-size:1.6rem;
+    font-weight:bold;
+    color:#00ffea
+}
+
+/* ===== SEVERITY ===== */
+.severity{
+    margin-top:25px;
+    background:rgba(255,59,59,.12);
+    padding:20px;
+    border-radius:16px;
+}
+
+.severity-bar-bg{
+    height:18px;
+    background:rgba(255,255,255,.15);
+    border-radius:10px;
+    margin-top:10px;
+}
+
+.severity-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00ffea,#ff3b3b);
+    border-radius:10px;
+    transition:width 1.5s ease;
+}
+
+/* ===== BUTTON ===== */
+.btn{
+    display:inline-flex;
+    justify-content:center;
+    padding:12px 120px;
+    border-radius:50px;
+    text-decoration:none;
+    color:#00ffea;
+    background:rgba(0,255,234,.1);
+    border:2px solid rgba(0,255,234,.4);
+    margin-top:22px;
+}
+
+.back{text-align:center;margin-top:40px}
+
+/* 🔴 FULL SCREEN RED OVERLAY */
+#redOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(255,0,0,0.35);
+    display:none;
+    z-index:9999;
+    animation:redPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes redPulse{
+    0%{opacity:.25}
+    50%{opacity:.45}
+    100%{opacity:.25}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>Network Traffic Classification</h1>
+<div class="subtitle">Advanced Security Analytics</div>
+
+<div class="dashboard">
+
+<div class="card">
+<h2 style="text-align:center;color:#00ffea">Traffic Distribution</h2>
+
+<div class="chart-wrapper">
+<div class="chart-container">
+<canvas id="trafficChart"></canvas>
+<div class="center-text">
+<div class="center-title">TRAFFIC</div>
+<div class="center-title">ANALYSIS</div>
+<div class="center-subtitle" id="centerStats"></div>
+</div>
+</div>
+</div>
+
+<div class="summary-grid" id="summaryStats"></div>
+</div>
+
+<div class="card">
+<h2 style="text-align:center;color:#00ffea">Security Assessment</h2>
+
+<div class="stat">
+<h4>Total Records</h4>
+<p>{{ total }}</p>
+</div>
+
+<div class="severity">
+<h3>Threat Severity</h3>
+<h1 id="severityText">0%</h1>
+<div class="severity-bar-bg">
+<div class="severity-bar" id="severityBar"></div>
+</div>
+</div>
+
+{% if csv_file %}
+<a href="{{ csv_file }}" class="btn" download>Download Attack CSV</a>
+{% endif %}
+</div>
+
+</div>
+
+<div class="back">
+<a href="/" class="btn">← Back to Dashboard</a>
+</div>
+</div>
+
+<div id="redOverlay"></div>
+
+{{ class_counts|json_script:"classCountsData" }}
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+const data = JSON.parse(document.getElementById("classCountsData").textContent);
+const total = Object.values(data).reduce((a,b)=>a+b,0);
+
+const attackTotal =
+    (data.flowtable||0) +
+    (data.controller||0) +
+    (data.bandwidth||0);
+
+const severity = total ? ((attackTotal/total)*100).toFixed(1) : 0;
+
+document.getElementById("centerStats").textContent =
+`${((data.normal||0)/total*100).toFixed(1)}% Normal`;
+
+document.getElementById("severityText").textContent = severity+"%";
+document.getElementById("severityBar").style.width = severity+"%";
+
+/* stats */
+const summary = document.getElementById("summaryStats");
+Object.entries(data).forEach(([k,v])=>{
+    const d=document.createElement("div");
+    d.className="stat";
+    d.innerHTML=`<h4>${k.toUpperCase()}</h4><p>${v}</p>`;
+    summary.appendChild(d);
+});
+
+/* doughnut chart with CIRCULAR legend symbols */
+new Chart(document.getElementById("trafficChart"),{
+    type:"doughnut",
+    data:{
+        labels:["Normal","Flowtable","Controller","Bandwidth"],
+        datasets:[{
+            data:[
+                data.normal||0,
+                data.flowtable||0,
+                data.controller||0,
+                data.bandwidth||0
+            ],
+            backgroundColor:["#00ffea","#8a3ffc","#ffb000","#ff3b3b"],
+            borderColor:"#000",
+            borderWidth:3
+        }]
+    },
+    options:{
+        responsive:true,
+        aspectRatio:1,
+        cutout:"55%",
+        plugins:{
+            legend:{
+                position:"bottom",
+                labels:{
+                    color:"#90e0ef",
+                    usePointStyle:true,     // ✅ makes symbols circular
+                    pointStyle:'circle',    // ✅ force circle shape
+                    padding:16
+                }
+            }
+        }
+    }
+});
+
+/* 🔴 RED OVERLAY 3 TIMES */
+if(severity>50){
+    const overlay=document.getElementById("redOverlay");
+    let count=0;
+    const timer=setInterval(()=>{
+        overlay.style.display="block";
+        setTimeout(()=>overlay.style.display="none",600);
+        count++;
+        if(count===3) clearInterval(timer);
+    },900);
+}
+
+});
+</script>
+
+</body>
+</html>

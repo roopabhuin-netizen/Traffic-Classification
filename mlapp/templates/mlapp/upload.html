@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Network Traffic Classification</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== BODY ===== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #0a192f, #020c1b);
+    color: #e0e8f0;
+    overflow: hidden;
+}
+
+/* ===== BACKGROUND CANVAS ===== */
+#bgCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* ===== UPLOAD CARD ===== */
+.upload-box {
+    background: rgba(10, 25, 47, 0.92);
+    border: 1px solid #64ffda;
+    border-radius: 20px;
+    padding: 45px 55px;
+    width: 460px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(100,255,218,0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* ===== HEADINGS ===== */
+.upload-box h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #64ffda, #00bcd4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.upload-box h2 {
+    font-size: 1.1rem;
+    color: #ccd6f6;
+    margin-bottom: 30px;
+}
+
+/* ===== FILE INPUT ===== */
+input[type="file"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 2px dashed #64ffda;
+    background: rgba(17, 34, 64, 0.9);
+    color: #ccd6f6;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+/* ===== BUTTON ===== */
+button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, #64ffda, #00bcd4);
+    color: #0a192f;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(100,255,218,0.4);
+}
+
+/* ===== ERROR ===== */
+.error {
+    margin-top: 20px;
+    color: #ff6b6b;
+    font-size: 0.95rem;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🌐 BACKGROUND NETWORK -->
+<canvas id="bgCanvas"></canvas>
+
+<div class="container">
+    <div class="upload-box">
+        <h1>Network Attack Detection</h1>
+        <h2>Upload network traffic CSV file</h2>
+
+        <!-- ✅ CORRECT FORM -->
+        <form method="post"
+              enctype="multipart/form-data"
+              action="{% url 'upload_file' %}">
+            {% csrf_token %}
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">Upload & Analyze</button>
+        </form>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+/* ===== LIGHT PROFESSIONAL NETWORK BACKGROUND ===== */
+const canvas = document.getElementById("bgCanvas");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const nodes = Array.from({ length: 45 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3
+}));
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    nodes.forEach(n => {
+        n.x += n.vx;
+        n.y += n.vy;
+
+        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#64ffda";
+        ctx.fill();
+    });
+
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+
+            if (d < 140) {
+                ctx.strokeStyle = "rgba(100,255,218,0.15)";
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>

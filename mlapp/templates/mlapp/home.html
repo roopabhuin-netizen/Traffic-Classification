@@ -1,0 +1,1123 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+/* ===========================
+   GLOBAL STYLING
+=========================== */
+:root {
+    --primary: #64ffda;
+    --primary-glow: rgba(100, 255, 218, 0.9);
+    --secondary: #00bcd4;
+    --dark-bg: #0a192f;
+    --card-bg: rgba(10, 25, 47, 0.85);
+    --border-color: #233554;
+    --text-light: #e0e8f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", "Inter", Arial, sans-serif;
+    color: var(--text-light);
+    background: linear-gradient(135deg, 
+        rgba(0, 20, 40, 0.95) 0%,
+        rgba(0, 10, 30, 0.98) 50%,
+        rgba(5, 15, 35, 0.95) 100%);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Particle Background */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.gradient-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(100, 255, 218, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(41, 121, 255, 0.08) 0%, transparent 50%);
+    z-index: -1;
+    animation: gradientShift 15s ease-in-out infinite alternate;
+}
+
+@keyframes gradientShift {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ===========================
+   HERO SECTION
+=========================== */
+.hero-container {
+    text-align: center;
+    padding: 160px 20px 140px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+    opacity: 0.15;
+    z-index: 1;
+    animation: pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.1; }
+    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    letter-spacing: 1.5px;
+    line-height: 1.2;
+    text-shadow: 0 0 30px rgba(100, 255, 218, 0.3);
+    position: relative;
+}
+
+.title-underline {
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    margin: 20px auto 30px;
+    border-radius: 2px;
+    animation: slideIn 1s ease-out 0.5s both;
+}
+
+@keyframes slideIn {
+    from { width: 0; opacity: 0; }
+    to { width: 120px; opacity: 1; }
+}
+
+.subtitle {
+    font-size: 1.4rem;
+    margin-top: 10px;
+    opacity: 0.9;
+    font-weight: 300;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-buttons {
+    margin-top: 50px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 16px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.7s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--dark-bg);
+    box-shadow: 0 10px 30px rgba(100, 255, 218, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(100, 255, 218, 0.6);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+}
+
+.btn-secondary:hover {
+    background: rgba(100, 255, 218, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(100, 255, 218, 0.4);
+}
+
+/* ===========================
+   SECTION HEADINGS
+=========================== */
+.section-title {
+    text-align: center;
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 80px;
+    margin-left: -140px;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    border-radius: 3px;
+}
+
+/* ===========================
+   SERVICES CARDS
+=========================== */
+.services-section {
+    padding: 120px 0;
+    background: rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.service-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding: 0 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.service-card {
+    background: var(--card-bg);
+    padding: 40px 30px;
+    width: 360px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(100, 255, 218, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.05) 0%, transparent 50%);
+    z-index: -1;
+}
+
+.service-card:hover {
+    transform: translateY(-15px) scale(1.03);
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.4),
+        0 0 50px rgba(100, 255, 218, 0.3);
+    border-color: var(--primary);
+}
+
+.service-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 25px;
+    background: rgba(100, 255, 218, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--primary);
+    border: 2px solid rgba(100, 255, 218, 0.3);
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+.service-card:hover .service-icon {
+    background: rgba(100, 255, 218, 0.2);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 25px rgba(100, 255, 218, 0.4);
+}
+
+.service-card h3 {
+    color: var(--primary);
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.service-card p {
+    opacity: 0.85;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.service-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===========================
+   ABOUT SECTION
+=========================== */
+.about-section {
+    margin: 120px auto;
+    width: 85%;
+    max-width: 1200px;
+    background: var(--card-bg);
+    padding: 60px 50px;
+    border-radius: 25px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(100, 255, 218, 0.15);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        transparent, 
+        rgba(100, 255, 218, 0.1), 
+        transparent 30%
+    );
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    100% { transform: rotate(360deg); }
+}
+
+.about-section:hover {
+    transform: translateY(-10px);
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.4),
+        0 0 60px rgba(100, 255, 218, 0.25);
+}
+
+.about-content {
+    position: relative;
+    z-index: 2;
+}
+
+.about-section p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ===========================
+   FEATURES CAROUSEL
+=========================== */
+.features-carousel {
+    margin-top: 50px;
+    position: relative;
+}
+
+.carousel-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.feature-slide {
+    min-width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.feature-slide .feature-item {
+    background: rgba(10, 25, 47, 0.8);
+    padding: 40px 35px;
+    border-radius: 20px;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    transition: all 0.4s ease;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.feature-slide .feature-item h4 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.feature-slide .feature-item p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    opacity: 0.9;
+}
+
+/* Carousel Navigation Dots */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 40px;
+    padding: 10px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(100, 255, 218, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0;
+}
+
+.dot:hover {
+    background: rgba(100, 255, 218, 0.6);
+    transform: scale(1.2);
+}
+
+.dot.active {
+    background: var(--primary);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.8);
+    transform: scale(1.3);
+}
+
+.dot.active::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 1px solid var(--primary);
+    border-radius: 50%;
+    animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+/* Carousel Arrows */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(10, 25, 47, 0.9);
+    border: 2px solid rgba(100, 255, 218, 0.5);
+    color: var(--primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+.carousel-arrow:hover {
+    background: rgba(100, 255, 218, 0.2);
+    border-color: var(--primary);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 25px rgba(100, 255, 218, 0.4);
+}
+
+.prev-arrow {
+    left: 10px;
+}
+
+.next-arrow {
+    right: 10px;
+}
+
+/* Auto-play indicator */
+.carousel-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(100, 255, 218, 0.1);
+    overflow: hidden;
+    z-index: 11;
+}
+
+.carousel-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    width: 0%;
+    transition: width 5s linear;
+}
+
+/* ===========================
+   STATS SECTION
+=========================== */
+.stats-section {
+    padding: 100px 0;
+    background: rgba(0, 10, 30, 0.4);
+}
+
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 30px;
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+=========================== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.8rem;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+        margin-left: 0;
+    }
+    
+    .hero-container {
+        padding: 120px 20px 80px;
+    }
+    
+    .service-card {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+    
+    .about-section {
+        width: 95%;
+        padding: 40px 25px;
+        margin: 80px auto;
+    }
+    
+    .carousel-container {
+        max-width: 90%;
+    }
+    
+    .feature-slide .feature-item {
+        height: 250px;
+        padding: 30px 25px;
+    }
+    
+    .feature-slide .feature-item h4 {
+        font-size: 1.3rem;
+    }
+    
+    .feature-slide .feature-item p {
+        font-size: 1rem;
+    }
+    
+    .carousel-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .prev-arrow {
+        left: 5px;
+    }
+    
+    .next-arrow {
+        right: 5px;
+    }
+}
+
+/* Scroll animations */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.appear {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animation delays for slides */
+.feature-slide:nth-child(1) .feature-item { transition-delay: 0.1s; }
+.feature-slide:nth-child(2) .feature-item { transition-delay: 0.2s; }
+.feature-slide:nth-child(3) .feature-item { transition-delay: 0.3s; }
+.feature-slide:nth-child(4) .feature-item { transition-delay: 0.4s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Particle Background -->
+<div id="particles-js"></div>
+<div class="gradient-overlay"></div>
+
+<!-- HERO SECTION -->
+<section class="hero-container">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+        <h1 class="fade-in">Advanced Network Attack Detection</h1>
+        <div class="title-underline"></div>
+        <p class="subtitle fade-in">Vulnerability Traffic Classification of Network Using ML</p>
+        
+        <div class="cta-buttons fade-in">
+            <a href="{% url 'upload_file' %}">
+                <button class="btn btn-primary">
+                    <i class="fas fa-rocket"></i> Get Started Now
+                </button>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES SECTION -->
+<section class="services-section" id="services">
+    <h2 class="section-title fade-in">Our Services</h2>
+    
+    <div class="service-boxes">
+        <div class="service-card fade-in">
+            <div class="service-icon">
+                {% load static %}
+
+                <img src="{% static 'images/image6.jpg' %}" alt="Traffic Prediction">
+            </div>
+            <h3>Traffic Prediction</h3>
+            <p>Predicts future network load and identifies potential attack probabilities using machine learning models, enabling proactive network management and security planning.</p>
+        </div>
+        
+        <div class="service-card fade-in">
+            <div class="service-icon">
+                {% load static %}
+                <img src="{% static 'images/image2.jpg' %}" alt="AI Threat Detection">
+            </div>
+            <h3> Threat Detection</h3>
+            <p>Multi-layered machine learning algorithms that identify and classify sophisticated cyber threats with 99.8% accuracy and minimal false positives.</p>
+        </div>
+
+        
+        <div class="service-card fade-in">
+            <div class="service-icon">
+                {% load static %}
+                <img src="{% static 'images/image.jpg' %}" alt="Security Intelligence">
+            </div>
+            <h3>Security Intelligence</h3>
+            <p>Comprehensive dashboards, predictive analytics, and actionable insights to empower your security team with data-driven decision making.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about" class="about-section">
+    <div class="about-content">
+        <p class="fade-in">
+            Our project combines Machine Learning with SDN to classify network traffic in real time. By analyzing flow-level features, it accurately detects normal traffic and threats like Ping, Telnet, Voice, DNS, and DDoS attacks. This system offers fast, scalable, and secure network monitoring.
+        </p>
+        
+        <!-- Features Carousel -->
+        <div class="features-carousel">
+            <div class="carousel-container">
+                <!-- Carousel Progress Bar -->
+                <div class="carousel-progress">
+                    <div class="carousel-progress-bar"></div>
+                </div>
+                
+                <!-- Carousel Track -->
+                <div class="carousel-track">
+                    <!-- Slide 1 -->
+                    <div class="feature-slide active">
+                        <div class="feature-item fade-in">
+                            <h4>Machine Learning Engine</h4>
+                            <p>Our Random Forest–powered traffic classifier processes flow-level statistical features extracted from SDN switches to accurately differentiate between normal traffic and attack patterns such as Ping floods, Telnet misuse, DNS spikes, Voice-like UDP flows, and DDoS behaviors.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 2 -->
+                    <div class="feature-slide">
+                        <div class="feature-item fade-in">
+                            <h4>Real-time Processing</h4>
+                            <p>The SDN controller enables near-instant flow monitoring, allowing the ML model to analyze and classify live network traffic with sub-50 millisecond decision-making capabilities. This ensures fast detection of anomalies and minimizes the impact of ongoing attacks.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 3 -->
+                    <div class="feature-slide">
+                        <div class="feature-item fade-in">
+                            <h4>SDN-Driven Architecture</h4>
+                            <p>Our system leverages Software Defined Networking to separate control and data planes, enabling flexible, programmable, and scalable traffic management. This architecture allows dynamic rule updates, precise flow collection, and efficient deployment across networks of all sizes.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 4 -->
+                    <div class="feature-slide">
+                        <div class="feature-item fade-in">
+                            <h4>Security Insights</h4>
+                            <p>The platform provides detailed analytics, visual dashboards, and traffic reports to evaluate the network’s security posture. Administrators gain clear visibility into normal vs. malicious traffic trends, enabling informed decisions and proactive threat mitigation.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Dots -->
+                <div class="carousel-dots">
+                    <button class="dot active" data-slide="0" aria-label="Go to slide 1"></button>
+                    <button class="dot" data-slide="1" aria-label="Go to slide 2"></button>
+                    <button class="dot" data-slide="2" aria-label="Go to slide 3"></button>
+                    <button class="dot" data-slide="3" aria-label="Go to slide 4"></button>
+                </div>
+                
+                <!-- Navigation Arrows -->
+                <button class="carousel-arrow prev-arrow" aria-label="Previous slide">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-arrow next-arrow" aria-label="Next slide">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Particle.js Library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script>
+// Particle.js Configuration
+particlesJS('particles-js', {
+    particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: "#64ffda" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5, random: true },
+        size: { value: 3, random: true },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: "#64ffda",
+            opacity: 0.2,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 2,
+            direction: "none",
+            random: true,
+            straight: false,
+            out_mode: "out",
+            bounce: false
+        }
+    },
+    interactivity: {
+        detect_on: "canvas",
+        events: {
+            onhover: { enable: true, mode: "repulse" },
+            onclick: { enable: true, mode: "push" },
+            resize: true
+        }
+    },
+    retina_detect: true
+});
+
+// Scroll Animation
+const fadeElements = document.querySelectorAll('.fade-in');
+
+const appearOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -100px 0px"
+};
+
+const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('appear');
+        appearOnScroll.unobserve(entry.target);
+    });
+}, appearOptions);
+
+fadeElements.forEach(element => {
+    appearOnScroll.observe(element);
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } 
+    });
+});
+
+// Add floating animation to service cards
+document.querySelectorAll('.service-card').forEach(card => {
+    card.style.animationDelay = `${Math.random() * 0.5}s`;
+});
+
+// ===========================
+// CAROUSEL FUNCTIONALITY
+// ===========================
+const carouselTrack = document.querySelector('.carousel-track');
+const slides = document.querySelectorAll('.feature-slide');
+const dots = document.querySelectorAll('.dot');
+const prevBtn = document.querySelector('.prev-arrow');
+const nextBtn = document.querySelector('.next-arrow');
+const progressBar = document.querySelector('.carousel-progress-bar');
+let currentSlide = 0;
+let autoPlayInterval;
+let progressInterval;
+
+// Function to update carousel position
+function updateCarousel() {
+    // Update track position
+    carouselTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    // Update dots
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+    });
+    
+    // Update slides
+    slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+    });
+    
+    // Reset progress bar animation
+    progressBar.style.width = '0%';
+    progressBar.style.transition = 'none';
+    void progressBar.offsetWidth; // Trigger reflow
+    progressBar.style.transition = 'width 5s linear';
+    progressBar.style.width = '100%';
+}
+
+// Function to go to specific slide
+function goToSlide(slideIndex) {
+    if (slideIndex >= 0 && slideIndex < slides.length) {
+        currentSlide = slideIndex;
+        updateCarousel();
+        resetAutoPlay();
+    }
+}
+
+// Next slide
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateCarousel();
+    resetAutoPlay();
+}
+
+// Previous slide
+function prevSlide() {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateCarousel();
+    resetAutoPlay();
+}
+
+// Auto-play functionality
+function startAutoPlay() {
+    clearInterval(autoPlayInterval);
+    autoPlayInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+}
+
+function resetAutoPlay() {
+    startAutoPlay();
+}
+
+// Event Listeners for dots
+dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+        const slideIndex = parseInt(e.target.dataset.slide);
+        goToSlide(slideIndex);
+    });
+});
+
+// Event Listeners for arrows
+prevBtn.addEventListener('click', prevSlide);
+nextBtn.addEventListener('click', nextSlide);
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        prevSlide();
+    } else if (e.key === 'ArrowRight') {
+        nextSlide();
+    }
+});
+
+// Pause auto-play on hover
+const carouselContainer = document.querySelector('.carousel-container');
+carouselContainer.addEventListener('mouseenter', () => {
+    clearInterval(autoPlayInterval);
+    progressBar.style.animationPlayState = 'paused';
+    progressBar.style.transition = 'none';
+});
+
+carouselContainer.addEventListener('mouseleave', () => {
+    startAutoPlay();
+    progressBar.style.animationPlayState = 'running';
+    progressBar.style.transition = 'width 5s linear';
+});
+
+// Initialize carousel
+updateCarousel();
+startAutoPlay();
+
+// Add touch swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+let isDragging = false;
+
+carouselContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    isDragging = true;
+    clearInterval(autoPlayInterval);
+});
+
+carouselContainer.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    // Add visual feedback during drag
+    const currentX = e.touches[0].clientX;
+    const diff = touchStartX - currentX;
+    const maxDrag = 100;
+    
+    // Calculate drag percentage (clamped)
+    const dragPercent = Math.min(Math.max(diff / maxDrag, -1), 1);
+    
+    // Apply temporary transform for visual feedback
+    const trackWidth = carouselTrack.offsetWidth;
+    const slideWidth = trackWidth / slides.length;
+    const baseTransform = -currentSlide * 100;
+    const dragTransform = (dragPercent * slideWidth / trackWidth) * 100;
+    
+    carouselTrack.style.transform = `translateX(calc(${baseTransform}% + ${dragTransform}%))`;
+    carouselTrack.style.transition = 'none';
+});
+
+carouselContainer.addEventListener('touchend', (e) => {
+    if (!isDragging) return;
+    
+    touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    const swipeThreshold = 50;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+            // Swipe left - next slide
+            nextSlide();
+        } else {
+            // Swipe right - previous slide
+            prevSlide();
+        }
+    } else {
+        // Return to current slide if swipe wasn't significant
+        updateCarousel();
+    }
+    
+    isDragging = false;
+    startAutoPlay();
+});
+
+// Make carousel accessible with ARIA
+function updateARIA() {
+    slides.forEach((slide, index) => {
+        slide.setAttribute('aria-hidden', index !== currentSlide);
+        slide.setAttribute('role', 'tabpanel');
+        slide.setAttribute('aria-label', `Feature ${index + 1} of ${slides.length}`);
+    });
+    
+    dots.forEach((dot, index) => {
+        dot.setAttribute('aria-selected', index === currentSlide);
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-controls', `slide-${index}`);
+    });
+    
+    carouselTrack.setAttribute('role', 'tablist');
+    carouselTrack.setAttribute('aria-label', 'Features Carousel');
+}
+
+// Update ARIA attributes initially
+updateARIA();
+
+// Update ARIA on slide change
+const originalUpdateCarousel = updateCarousel;
+updateCarousel = function() {
+    originalUpdateCarousel();
+    updateARIA();
+};
+
+// Add slide indicators for screen readers
+const slideIndicators = document.createElement('div');
+slideIndicators.className = 'sr-only';
+slideIndicators.innerHTML = `
+    <span id="slide-counter">Slide ${currentSlide + 1} of ${slides.length}</span>
+    <button id="pause-play" aria-label="Pause auto-rotation">Pause</button>
+`;
+document.querySelector('.carousel-container').appendChild(slideIndicators);
+
+// Add pause/play functionality
+const pausePlayBtn = document.getElementById('pause-play');
+let isPaused = false;
+
+pausePlayBtn.addEventListener('click', () => {
+    if (isPaused) {
+        startAutoPlay();
+        pausePlayBtn.textContent = 'Pause';
+        pausePlayBtn.setAttribute('aria-label', 'Pause auto-rotation');
+        isPaused = false;
+    } else {
+        clearInterval(autoPlayInterval);
+        pausePlayBtn.textContent = 'Play';
+        pausePlayBtn.setAttribute('aria-label', 'Play auto-rotation');
+        isPaused = true;
+    }
+});
+
+// Update slide counter
+function updateSlideCounter() {
+    const counter = document.getElementById('slide-counter');
+    if (counter) {
+        counter.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+    }
+}
+
+// Update counter on slide change
+updateCarousel = function() {
+    originalUpdateCarousel();
+    updateARIA();
+    updateSlideCounter();
+};
+
+// Initialize counter
+updateSlideCounter();
+</script>
+{% endblock %}
